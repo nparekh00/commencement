@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Karla:wght@300;400;500;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#F5EFE0;color:#1C1710;font-family:'Karla',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 20px;}
+
+.masthead{background:#1C1710;color:#F5EFE0;text-align:center;padding:48px 20px 40px;position:relative;overflow:hidden;}
+.masthead::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:repeating-linear-gradient(90deg,#B8922A 0,#B8922A 6px,transparent 6px,transparent 12px);}
+.mast-vol{font-family:'Courier Prime',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#D4AD52;margin-bottom:16px;}
+.mast-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,7vw,76px);font-weight:700;line-height:.95;color:#F5EFE0;}
+.mast-h1 em{color:#D4AD52;font-style:italic;}
+.mast-hr{width:60px;height:1px;background:#B8922A;margin:16px auto;position:relative;}
+.mast-hr::before,.mast-hr::after{content:'◆';position:absolute;top:50%;transform:translateY(-50%);font-size:6px;color:#B8922A;}
+.mast-hr::before{right:calc(100% + 6px);}
+.mast-hr::after{left:calc(100% + 6px);}
+.mast-deck{font-family:'Cormorant Garamond',serif;font-size:clamp(14px,2vw,18px);font-style:italic;color:rgba(245,239,224,.65);max-width:500px;margin:0 auto 18px;line-height:1.5;}
+
+.counter-strip{background:#B8922A;padding:14px 20px;text-align:center;}
+.counter-inner{display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;}
+.counter-label{font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#1C1710;}
+.counter-num{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:#1C1710;line-height:1;min-width:60px;text-align:center;}
+.counter-sub{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(28,23,16,.6);}
+
+.tab-bar{background:#FBF8F2;border-bottom:2px solid rgba(184,146,42,.3);display:flex;position:sticky;top:0;z-index:100;}
+.tab-btn{flex:1;padding:14px 10px;background:transparent;border:none;color:#6B5D4F;font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.tab-btn:hover{color:#B8922A;}
+.tab-btn.active{color:#B8922A;border-bottom-color:#B8922A;background:rgba(184,146,42,.05);}
+
+.panel{display:none;padding:48px 0 64px;}
+.panel.active{display:block;}
+
+.eyebrow{font-family:'Courier Prime',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:#B8922A;margin-bottom:6px;}
+.sec-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:#1C1710;line-height:1.1;margin-bottom:12px;}
+.sec-intro{font-size:15px;color:#3D3427;line-height:1.75;max-width:620px;margin-bottom:36px;}
+
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));border:1px solid rgba(184,146,42,.28);background:#FBF8F2;}
+.fcell{padding:20px 24px;border-right:1px solid rgba(184,146,42,.2);border-bottom:1px solid rgba(184,146,42,.2);position:relative;transition:background .15s;}
+.fcell:hover{background:rgba(184,146,42,.04);}
+.fnum{position:absolute;top:10px;right:12px;font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:rgba(184,146,42,.2);line-height:1;user-select:none;}
+.flabel{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:#1C1710;margin-bottom:2px;}
+.ftype{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#B8922A;margin-bottom:8px;}
+.finput{width:100%;background:transparent;border:none;border-bottom:1.5px solid rgba(184,146,42,.4);padding:6px 2px;font-family:'Karla',sans-serif;font-size:15px;color:#1C1710;outline:none;transition:border-color .2s;}
+.finput:focus{border-bottom-color:#B8922A;}
+.finput::placeholder{color:rgba(107,93,79,.38);font-style:italic;}
+
+.btn-row{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap;align-items:stretch;}
+.btn-demo{background:transparent;border:1.5px solid rgba(107,93,79,.5);color:#3D3427;font-family:'Courier Prime',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 22px;cursor:pointer;border-radius:2px;transition:all .2s;}
+.btn-demo:hover{border-color:#B8922A;color:#B8922A;}
+
+/* THE GENERATE BUTTON — fully hardcoded, no variables */
+button.btn-gen {
+  all: unset;
+  display: inline-block;
+  flex: 1;
+  min-width: 200px;
+  background-color: #000000 !important;
+  color: #C9A84C !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: 20px !important;
+  font-style: italic !important;
+  padding: 14px 28px !important;
+  cursor: pointer !important;
+  border-radius: 2px !important;
+  text-align: center !important;
+  letter-spacing: .3px !important;
+  transition: opacity .2s, transform .2s !important;
+  box-sizing: border-box !important;
+}
+button.btn-gen:hover {
+  opacity: .88 !important;
+  transform: translateY(-2px) !important;
+}
+
+.output-wrap{display:none;}
+.output-wrap.visible{display:block;animation:fadeUp .5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.output-divider{text-align:center;margin:40px 0 32px;position:relative;}
+.output-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(184,146,42,.3);}
+.output-divider span{position:relative;background:#F5EFE0;font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:#B8922A;padding:0 18px;letter-spacing:2px;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:660px){.two-col{grid-template-columns:1fr;}}
+
+.speech-card{background:#FBF8F2;border:1px solid rgba(184,146,42,.3);padding:34px 38px;position:relative;box-shadow:4px 4px 0 rgba(184,146,42,.16);}
+.speech-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:repeating-linear-gradient(90deg,#1C1710 0,#1C1710 4px,#B8922A 4px,#B8922A 8px);}
+.speech-head{text-align:center;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid rgba(184,146,42,.28);}
+.speech-cap{font-size:26px;margin-bottom:6px;}
+.speech-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#1C1710;}
+.speech-byline{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#B8922A;margin-top:4px;}
+.speech-body{font-family:'Cormorant Garamond',serif;font-size:17px;line-height:1.85;color:#1C1710;}
+.speech-body p{margin-bottom:14px;}
+.speech-hl{color:#8C2A1E;font-style:italic;font-weight:600;}
+.speech-foot{margin-top:20px;padding-top:16px;border-top:1px solid rgba(184,146,42,.28);}
+.src-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.src-chip{background:#1C1710;color:#F0DFA0;font-family:'Courier Prime',monospace;font-size:8.5px;letter-spacing:1px;padding:3px 8px;border-radius:2px;}
+
+.li-card{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(28,23,16,.15);}
+.li-bar{background:#0A66C2;padding:10px 16px;display:flex;align-items:center;gap:9px;}
+.li-logo{background:#fff;color:#0A66C2;font-weight:700;font-size:11px;padding:2px 5px;border-radius:2px;font-family:'Karla',sans-serif;}
+.li-bar span{color:rgba(255,255,255,.7);font-size:11px;font-family:'Karla',sans-serif;}
+.li-body{padding:18px 20px;}
+.li-profile{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.li-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0A66C2,#1E5F5F);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex-shrink:0;}
+.li-name{font-weight:700;font-size:14px;font-family:'Karla',sans-serif;color:#000;}
+.li-meta{font-size:11px;color:#777;font-family:'Karla',sans-serif;}
+.li-post{font-family:'Karla',sans-serif;font-size:13.5px;line-height:1.7;color:#191919;white-space:pre-line;}
+.li-tags{margin-top:10px;color:#0A66C2;font-size:12px;font-family:'Karla',sans-serif;}
+.li-react{border-top:1px solid #e8e8e8;margin-top:12px;padding-top:9px;display:flex;gap:16px;font-size:12px;color:#666;font-family:'Karla',sans-serif;}
+.btn-copy{display:block;width:100%;padding:13px;background:#0A66C2;border:none;color:#fff;font-family:'Karla',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;letter-spacing:.4px;}
+.btn-copy:hover{background:#0851A3;}
+.btn-copy.done{background:#2A7F5A;}
+
+.spk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;}
+.spk-card{background:#FBF8F2;border:1px solid rgba(184,146,42,.22);border-top:3px solid #B8922A;padding:22px 24px;position:relative;transition:box-shadow .2s,transform .2s;}
+.spk-card:hover{box-shadow:0 6px 24px rgba(28,23,16,.12);transform:translateY(-2px);}
+.spk-card.c-rust{border-top-color:#8C2A1E;}
+.spk-card.c-blue{border-top-color:#1E4A7F;}
+.spk-card.c-green{border-top-color:#2A6B4A;}
+.spk-n{position:absolute;top:-12px;right:20px;background:#1C1710;color:#D4AD52;font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+.spk-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:#1C1710;margin-bottom:2px;}
+.spk-where{font-family:'Courier Prime',monospace;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:#B8922A;margin-bottom:10px;}
+.spk-why{font-size:13.5px;color:#3D3427;line-height:1.68;margin-bottom:12px;}
+.spk-q{font-family:'Cormorant Garamond',serif;font-size:14.5px;font-style:italic;color:#6B5D4F;padding-left:12px;border-left:2px solid #B8922A;line-height:1.6;margin-bottom:12px;}
+.spk-link{display:inline-block;font-family:'Courier Prime',monospace;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:#1E4A7F;text-decoration:none;border-bottom:1px solid rgba(30,74,127,.3);padding-bottom:1px;transition:color .2s;}
+.spk-link:hover{color:#8C2A1E;}
+.spk-theme{display:inline-block;margin-left:10px;background:#1C1710;color:#F0DFA0;font-family:'Courier Prime',monospace;font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:2px;}
+
+footer{background:#1C1710;color:rgba(245,239,224,.4);text-align:center;padding:24px 20px;font-family:'Courier Prime',monospace;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;}
+footer span{color:#D4AD52;opacity:.7;}
+
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr;}
+  .fcell{border-right:none;}
+  .btn-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-vol">Class of 2026 · Commencement Edition · May 23, 2026</div>
+  <h1 class="mast-h1">Your<br><em>Commencement</em><br>Speech</h1>
+  <div class="mast-hr"></div>
+  <p class="mast-deck">Fill in the blanks. Get your speech. Post it to the world.</p>
+</header>
+
+<div class="counter-strip">
+  <div class="counter-inner">
+    <div class="counter-sub">Speeches generated</div>
+    <div class="counter-num" id="counterNum">—</div>
+    <div class="counter-label">graduates have written their speech</div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('madlibs',this)">🎓 Write My Speech</button>
+  <button class="tab-btn" onclick="switchTab('why',this)">📖 Why These Speeches</button>
+</div>
+
+<!-- MAD LIBS -->
+<div id="panel-madlibs" class="panel active">
+<div class="wrap">
+  <div class="eyebrow">Your Commencement Speech</div>
+  <h2 class="sec-h2">Fill in the blanks below —<br>your speech is waiting.</h2>
+  <p class="sec-intro">Eight answers. Inspired by four real 2026 commencement addresses. Hit <strong>Generate Speech &amp; Post</strong> and your personalized speech — and a ready-to-post LinkedIn version — appears instantly.</p>
+
+  <div class="form-grid">
+    <div class="fcell"><div class="fnum">01</div><div class="flabel">Your School or Program</div><div class="ftype">Proper noun</div><input class="finput" id="f1" type="text" placeholder="e.g. Northwestern, my MBA"></div>
+    <div class="fcell"><div class="fnum">02</div><div class="flabel">Your Biggest Setback</div><div class="ftype">Noun phrase — your "28-3 moment"</div><input class="finput" id="f2" type="text" placeholder="e.g. a failed startup, a layoff"></div>
+    <div class="fcell"><div class="fnum">03</div><div class="flabel">What You Almost Quit</div><div class="ftype">Noun / verb phrase</div><input class="finput" id="f3" type="text" placeholder="e.g. this degree, my company"></div>
+    <div class="fcell"><div class="fnum">04</div><div class="flabel">Someone Who Kept You Going</div><div class="ftype">Name or role</div><input class="finput" id="f4" type="text" placeholder="e.g. my mentor, my co-founder"></div>
+    <div class="fcell"><div class="fnum">05</div><div class="flabel">Your Unique Gift</div><div class="ftype">Noun</div><input class="finput" id="f5" type="text" placeholder="e.g. empathy, storytelling, code"></div>
+    <div class="fcell"><div class="fnum">06</div><div class="flabel">What You're Walking Into</div><div class="ftype">Noun phrase</div><input class="finput" id="f6" type="text" placeholder="e.g. my own venture, a new role"></div>
+    <div class="fcell"><div class="fnum">07</div><div class="flabel">One Word That Defines You</div><div class="ftype">Adjective</div><input class="finput" id="f7" type="text" placeholder="e.g. relentless, curious, kind"></div>
+    <div class="fcell"><div class="fnum">08</div><div class="flabel">Your Name</div><div class="ftype">For the sign-off</div><input class="finput" id="f8" type="text" placeholder="your name"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-demo" onclick="loadDemo()">↻ Load Example Values</button>
+    <button class="btn-gen" onclick="buildSpeech()">Generate Speech &amp; Post →</button>
+  </div>
+
+  <div class="output-wrap" id="outputWrap">
+    <div class="output-divider"><span>✦ Your Commencement Speech ✦</span></div>
+    <div class="two-col">
+      <div class="speech-card">
+        <div class="speech-head">
+          <div class="speech-cap">🎓</div>
+          <div class="speech-title">To the Class of 2026</div>
+          <div class="speech-byline">Domingo · Green · Winkler · Brady</div>
+        </div>
+        <div class="speech-body" id="speechBody"></div>
+        <div class="speech-foot">
+          <div class="src-chips">
+            <span class="src-chip">Domingo / Temple</span>
+            <span class="src-chip">Green / Rice</span>
+            <span class="src-chip">Winkler / Emerson</span>
+            <span class="src-chip">Brady / Georgetown</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="li-card">
+          <div class="li-bar"><span class="li-logo">in</span><span>LinkedIn Post Preview</span></div>
+          <div class="li-body">
+            <div class="li-profile">
+              <div class="li-av">👤</div>
+              <div><div class="li-name" id="liName">Your Name</div><div class="li-meta">Class of 2026 · Just now</div></div>
+            </div>
+            <div class="li-post" id="liPost"></div>
+            <div class="li-tags">#ClassOf2026 #Commencement2026 #Graduation #NewChapter</div>
+            <div class="li-react"><span>👏 Celebrate</span><span>❤️ Like</span><span>💬 Comment</span><span>↗️ Share</span></div>
+          </div>
+          <button class="btn-copy" id="copyBtn" onclick="copyPost()">📋 Copy LinkedIn Post</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- WHY -->
+<div id="panel-why" class="panel">
+<div class="wrap">
+  <div class="eyebrow">The Source Material</div>
+  <h2 class="sec-h2">Why These Four Speeches</h2>
+  <p class="sec-intro">Every blank in the Mad Libs draws from one of these four addresses — all delivered before May 23, 2026. Together they cover adversity, identity, purpose, and community.</p>
+  <div class="spk-grid">
+    <div class="spk-card c-rust">
+      <div class="spk-n">1</div>
+      <div class="spk-name">Colman Domingo</div>
+      <div class="spk-where">Temple University · May 6, 2026</div>
+      <div class="spk-why">We chose Domingo because he abandoned his script. A two-time Oscar nominee who dropped out of Temple's journalism program in 1991, his credibility is earned through detours. He testified rather than performed — no platitudes. His message about character outlasting every trophy is the emotional anchor of this speech.</div>
+      <div class="spk-q">"Success is lovely, awards are shiny, titles are impressive — but character, character is the legacy."</div>
+      <a class="spk-link" href="https://www.inquirer.com/arts/colman-domingo-temple-university-commencement-speech-20260506.html" target="_blank">Read full coverage ↗</a>
+      <span class="spk-theme">Identity</span>
+    </div>
+    <div class="spk-card c-blue">
+      <div class="spk-n">2</div>
+      <div class="spk-name">John Green</div>
+      <div class="spk-where">Rice University · May 9, 2026</div>
+      <div class="spk-why">Green addressed a class graduating into AI disruption and instability without flinching. His argument that despair is logically wrong — not just emotionally bad — is the most intellectually honest thing said at any lectern this season. He gave graduates permission to hold two truths at once and still show up.</div>
+      <div class="spk-q">"Like a replicating virus, all despair makes is more of itself. We are called to work with and for each other."</div>
+      <a class="spk-link" href="https://news.rice.edu/news/2026/we-are-called-work-and-each-other-john-green-delivers-hopeful-message-rices-undergraduate" target="_blank">Read Rice University coverage ↗</a>
+      <span class="spk-theme">Perspective</span>
+    </div>
+    <div class="spk-card c-green">
+      <div class="spk-n">3</div>
+      <div class="spk-name">Henry Winkler</div>
+      <div class="spk-where">Emerson College · May 10, 2026</div>
+      <div class="spk-why">Bottom 3% academically. Rejected by 27 of 28 colleges. Dyslexic. Six decades of career later — Winkler didn't moralize. He simply said: you are powerful, you have a gift, go find it and give it away. That directness is exactly what this composite needed.</div>
+      <div class="spk-q">"You cannot live a rich life if you don't have empathy. You are powerful — and in you is a great gift."</div>
+      <a class="spk-link" href="https://singjupost.com/henry-winklers-speech-to-emerson-college-2026-graduates-transcript/" target="_blank">Read full transcript ↗</a>
+      <span class="spk-theme">Purpose</span>
+    </div>
+    <div class="spk-card">
+      <div class="spk-n">4</div>
+      <div class="spk-name">Tom Brady</div>
+      <div class="spk-where">Georgetown University · May 16, 2026</div>
+      <div class="spk-why">Brady used the 28-3 Super Bowl comeback not to brag, but to build a thesis about adversity. For graduates entering uncertainty, his message is structurally perfect: your worst moment is coming, preparation is invisible until it matters, and quitting is the only guaranteed loss.</div>
+      <div class="spk-q">"When you're facing your own 28-3 moment — and believe me, it's coming — you'll have a choice: quit, or fight your ass off."</div>
+      <a class="spk-link" href="https://msb.georgetown.edu/news-story/student-experience/tom-brady-to-graduates-when-the-odds-are-against-you-keep-fighting/" target="_blank">Read Georgetown coverage ↗</a>
+      <span class="spk-theme">Resilience</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer><span>Class of 2026</span> · All four source speeches verified as delivered · May 23, 2026</footer>
+
+<script>
+function switchTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+const KEY='commencement_speech_count';
+
+async function loadCounter(){
+  try{
+    const r=await window.storage.get(KEY);
+    animateCount(0,r?parseInt(r.value,10):0);
+  }catch(e){document.getElementById('counterNum').textContent='0';}
+}
+
+async function incrementCounter(){
+  try{
+    let n=0;
+    try{const r=await window.storage.get(KEY);if(r)n=parseInt(r.value,10);}catch(e){}
+    const next=n+1;
+    await window.storage.set(KEY,String(next));
+    animateCount(n,next);
+  }catch(e){}
+}
+
+function animateCount(from,to){
+  const el=document.getElementById('counterNum');
+  const start=performance.now();
+  const dur=800;
+  function tick(now){
+    const p=Math.min((now-start)/dur,1);
+    const e=1-Math.pow(1-p,3);
+    el.textContent=Math.round(from+(to-from)*e).toLocaleString();
+    if(p<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+loadCounter();
+
+function loadDemo(){
+  document.getElementById('f1').value='my MBA program';
+  document.getElementById('f2').value='a company I had to shut down';
+  document.getElementById('f3').value='starting over at 30';
+  document.getElementById('f4').value='my co-founder';
+  document.getElementById('f5').value='seeing around corners';
+  document.getElementById('f6').value='building something of my own';
+  document.getElementById('f7').value='relentless';
+  document.getElementById('f8').value='Niki';
+}
+
+function v(id){return document.getElementById(id).value.trim();}
+function or(val,fb){return val||fb;}
+
+function buildSpeech(){
+  const school=or(v('f1'),'my school');
+  const setback=or(v('f2'),'a crushing setback');
+  const quit=or(v('f3'),'everything');
+  const person=or(v('f4'),'someone who believed in me');
+  const gift=or(v('f5'),'something the world needs');
+  const next=or(v('f6'),'whatever comes next');
+  const adj=or(v('f7'),'unstoppable');
+  const name=or(v('f8'),'Your Name');
+  const hl=s=>`<span class="speech-hl">${s}</span>`;
+  const paras=[
+    `Tom Brady walked onto Georgetown's commencement stage and opened with a single number: <strong>99.7</strong>. The odds against his Patriots in Super Bowl LI, down 28-3. He mounted the greatest comeback in NFL history anyway. <em>${setback}</em> was your 99.7 moment. And here you are.`,
+    `There were days you nearly walked away from <strong>${quit}</strong>. But ${hl(person)} saw something in you that you couldn't see in yourself. John Green put it best at Rice: <em>"We are called to work with and for each other."</em> The antidote to despair has always been the person beside you.`,
+    `Colman Domingo walked back into Temple nearly forty years after dropping out — and left his prepared notes on the table. He said it plainly: success is lovely, titles are impressive. But character is the legacy. Walk out of <strong>${school}</strong> as your whole, ${hl(adj)}, unstoppable self.`,
+    `Henry Winkler told Emerson something simple: you cannot live a rich life without empathy. And you hold a gift that belongs to the world. That gift is ${hl(gift)}. The world cannot afford for you to keep it to yourself.`,
+    `You are walking into ${hl(next)}. The tests of school are finished. The tests of life never end. Every hard choice from here is a brick in the path toward the life you want. Every excuse is a brick in the wall that stands in your way.`,
+    `Choose the path. Never quit. Class of 2026 — the world is ready for you.\n\n<em>— ${name}</em>`
+  ];
+  document.getElementById('speechBody').innerHTML=paras.map(p=>`<p>${p}</p>`).join('');
+
+  const li=`I graduated from ${school}.
+
+And honestly — I nearly didn't make it.
+
+${setback} was my 28-3 moment. The odds were not in my favor.
+
+I almost quit ${quit}. But ${person} believed in me when I couldn't, and I remembered what John Green told Rice's Class of 2026: despair only makes more of itself. We are called to work with and for each other.
+
+Tom Brady told Georgetown graduates that the only guaranteed loss is quitting. He was right.
+
+Colman Domingo went back to Temple and said forget the trophies — character is the legacy. I'm carrying that into ${next} as my whole, ${adj} self.
+
+Henry Winkler told Emerson that every graduate holds a gift the world needs. Mine is ${gift}. I'm done holding it back.
+
+Class of 2026 — we're just getting started. 🎓
+
+— ${name}`;
+
+  document.getElementById('liName').textContent=name;
+  document.getElementById('liPost').textContent=li;
+  const out=document.getElementById('outputWrap');
+  out.classList.add('visible');
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('copyBtn').textContent='📋 Copy LinkedIn Post';
+  document.getElementById('copyBtn').classList.remove('done');
+  incrementCounter();
+}
+
+function copyPost(){
+  const txt=document.getElementById('liPost').textContent+'\n\n#ClassOf2026 #Commencement2026 #Graduation #NewChapter';
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b=document.getElementById('copyBtn');
+    b.textContent='✅ Copied! Ready to paste into LinkedIn';
+    b.classList.add('done');
+  });
+}
+</script>
+</body>
+</html>
